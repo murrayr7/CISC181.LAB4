@@ -1,0 +1,142 @@
+package Poker.GUI;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+
+import javax.swing.text.html.HTMLDocument.Iterator;
+
+import pokerBase.Card;
+import pokerBase.Deck;
+import pokerBase.Hand;
+import pokerBase.Player;
+import pokerBase.Rule;
+import pokerEnums.eGame;
+import pokerEnums.eRank;
+
+public class PlayGame {
+	private eGame gme;
+	private ArrayList<Player> players = new ArrayList<Player>();
+	Deck d;
+	Rule r;
+	boolean newGame=false;
+
+	public PlayGame(eGame gme) {
+		this.gme = gme;
+	}
+
+	public eGame GetGame() {
+		return this.gme;
+	}
+
+	public void AddPlayer(Player p) {
+		players.add(p);
+	}
+
+	public void run() {
+
+		startNewGame();
+
+	}
+
+	public void startNewGame() {
+		r = new Rule(gme);
+		// Set a new deck d
+		d = new Deck(r.GetNumberOfJokers(),r.GetRuleCards());
+		// play the hand
+		playHand();
+	}
+
+	public void prePlayHand() {
+		if(d.getTotalCards()<r.numberCardsForHand(players.size())|newGame){
+			startNewGame();
+			newGame=false;
+		}else{
+			playHand();
+		}
+
+	}
+
+	public void playHand(){
+		// Reset each player's hand
+		for (Player p : players) {
+			p.resetHand();
+		}
+
+		Hand river = new Hand();
+		for(int i=0;i<r.GetCommunityCardsCount();i++){
+			Card c = d.drawFromDeck();
+			river.AddCardToHand(c);
+		}
+		players.get(0).getClient().boardUpdated (river.getCards() );
+
+		for (Player p :players){
+			// Create a hand for each player
+			Hand h = new Hand();
+			for (int i = 0; i < r.GetNumberOfCards(); i++) {
+				Card c = d.drawFromDeck();
+				h.AddCardToHand(c);
+			}
+			switch(gme){
+			case DeucesWild:
+			case AcesAndEights:
+			case FiveStudOneJoker:
+			case FiveStudTwoJoker:
+			case FiveStud:
+				h.HandleJokerWilds();
+				p.SetHand(h);
+				break;
+			case SevenDraw:
+				// eval all possible sets of 5 cards 
+				ArrayList<ArrayList<Card>> possiblities = powerSetsOfArrayList(h.getCards(),5);
+				
+			case TexasHoldEm:
+				//eval all sets of hands between hand and river
+			case Omaha:
+				//create all sets of two in hand 
+				//create all sets of three in river 
+				//eval all possible combinations of the two sets of sets
+			default:break;
+			}
+		}
+
+
+		// Players have hands, call the playerUpdated method to set the
+		// screen
+		updatePlayerStatus(players);
+	}
+
+
+
+	private ArrayList<ArrayList<Card>> powerSetsOfArrayList(ArrayList<Card> h, int j) {
+		Set<Card> originalSet = new HashSet<Card>(h);
+		Set<Set<Card>> set = new HashSet<Set<Card>>();
+		java.util.Iterator<Card> iter = originalSet.iterator();
+		for(int i=0;i<originalSet.size();i++){
+			Set<Card> temp = new HashSet<Card>();
+		}
+		return null;
+	}
+	private Set<Set<Card>> powerSetsOfSet( Set<Card> h, int i ){
+		
+	}
+	
+
+	private void updatePlayerStatus(ArrayList<Player> players){
+		Player.findWinner(players);
+		for (Player p : players) {
+			p.getClient().playerUpdated(p);
+			p.getClient().playerActed(p);
+		}
+	}
+
+	public void setGme(eGame gme){
+		this.gme = gme;
+		r= new Rule(gme);
+		newGame=true;
+
+	}
+
+}

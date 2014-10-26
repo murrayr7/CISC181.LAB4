@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<qualifiedTypeNameHistroy>
+<fullyQualifiedTypeName name="pokerBase.Rule"/>
+<fullyQualifiedTypeName name="pokerEnums.eGame"/>
+<fullyQualifiedTypeName name="Poker.GUI.PlayerPanel"/>
+<fullyQualifiedTypeName name="java.util.ArrayList"/>
+<fullyQualifiedTypeName name="pokerEnums.eRank"/>
+<fullyQualifiedTypeName name="java.util.HashSet"/>
+<fullyQualifiedTypeName name="java.util.Set"/>
+<fullyQualifiedTypeName name="javax.swing.text.html.HTMLDocument.Iterator"/>
+<fullyQualifiedTypeName name="java.util.LinkedHashSet"/>
+</qualifiedTypeNameHistroy>
